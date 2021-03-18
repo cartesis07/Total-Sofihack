@@ -10,6 +10,8 @@ import pytz
 import math
 import random as rd
 
+from pyproj import Transformer
+
 #PATHS
 
 input_path = "Hackathon_Data/input_file_csv.csv"
@@ -75,9 +77,6 @@ for i in range(50):
     tmp_mix.append(rd.random())
     tmp_cost.append(rd.uniform(0,100))
 
-print(tmp_mix)
-print(tmp_cost)
-
 count = 0
 for i in range(input_data.shape[0]):
     current_charge = input_data[' %_charge '].values[i]
@@ -85,6 +84,7 @@ for i in range(input_data.shape[0]):
     lambda_mix = input_data[' %_mix_energetique '].values[i]
     lambda_cost = input_data[' %_cout_elec '].values[i]
 
+    # Time conversion
     timezone = pytz.timezone('Europe/Paris')
 
     start_str = input_data[' dateheure_plug '].values[i]
@@ -97,4 +97,12 @@ for i in range(input_data.shape[0]):
 
     difference = math.floor( (timezone_stop_obj - timezone_start_obj).total_seconds() / 3600 )
 
-    genetic_vehicle(difference,current_charge,charge_speed,lambda_mix,lambda_cost,tmp_mix,tmp_cost)
+    # Geolocalization
+    x_wgs_84 = input_data['x(E) W84-N31'].values[i]
+    y_wgs_84 = input_data['y(N) W84-N31'].values[i]
+
+
+    transformer = Transformer.from_crs("epsg:32631", "epsg:4326")   
+    x2,y2 = transformer.transform(x_wgs_84, y_wgs_84)
+
+    #genetic_vehicle(difference,current_charge,charge_speed,lambda_mix,lambda_cost,tmp_mix,tmp_cost)
