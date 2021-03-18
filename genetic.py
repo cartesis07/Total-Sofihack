@@ -41,10 +41,10 @@ def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, 
             charge += 30 * X[i] * charge_speed
 
         if(current_charge + charge < 100):
-            penalty = 1
+            penalty = 1000
 
         if(current_charge + charge > 100 + 30 * charge_speed):
-            penalty = 1
+            penalty = 1000
 
         score = []
         for i in range(periods):
@@ -58,7 +58,7 @@ def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, 
 
     algorithm_param = {'max_num_iteration': 100,\
                    'population_size':100,\
-                   'mutation_probability':0.2,\
+                   'mutation_probability':0.1,\
                    'elit_ratio': 0.01,\
                    'crossover_probability': 0.5,\
                    'parents_portion': 0.3,\
@@ -68,4 +68,4 @@ def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, 
     model=ga(function=cost_function,dimension=periods,variable_type='bool',algorithm_parameters=algorithm_param)
     model.run()
 
-genetic_vehicle(10,50,0.474316267771597,0.9,0.1,[0.3,0.2,0.5,0.7,0.8,0.9,0.1,0.2,0.3,0.4],[0.6,0.1,0.5,0.5,0.4,0.7,0.3,0.4,0.7,0.2])
+genetic_vehicle(10,50,0.474316267771597,0.1,0.9,[0.3,0.2,0.5,0.7,0.8,0.9,0.1,0.2,0.3,0.4],[60,10,50,50,40,70,30,40,70,20])
