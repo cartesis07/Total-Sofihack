@@ -97,12 +97,4 @@ for i in range(input_data.shape[0]):
 
     difference = math.floor( (timezone_stop_obj - timezone_start_obj).total_seconds() / 3600 )
 
-    # Geolocalization
-    x_wgs_84 = input_data['x(E) W84-N31'].values[i]
-    y_wgs_84 = input_data['y(N) W84-N31'].values[i]
-
-
-    transformer = Transformer.from_crs("epsg:32631", "epsg:4326")   
-    x2,y2 = transformer.transform(x_wgs_84, y_wgs_84)
-
     #genetic_vehicle(difference,current_charge,charge_speed,lambda_mix,lambda_cost,tmp_mix,tmp_cost)
