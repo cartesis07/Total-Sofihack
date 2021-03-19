@@ -7,6 +7,8 @@ import tensorflow as tf
 import itertools
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 from tensorflow import keras
 from tensorflow.keras import layers
 import math
@@ -22,6 +24,9 @@ print(np.isnan(training_set.values.sum()))
 X = training_set.iloc[:, 10:65].values
 y = training_set.iloc[:, 0:10].values
 
+print(X[0])
+print(y[0])
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
 sc = StandardScaler()
@@ -35,6 +40,8 @@ dense_layer_3 = layers.Dense(25, activation='relu')(dense_layer_2)
 output = layers.Dense(10)(dense_layer_3)
 
 model = keras.Model(inputs=input_layer, outputs=output)
-model.compile(loss="mean_squared_error" , optimizer="adam", metrics=["mean_squared_error"])
+model.compile(loss="mean_squared_error" , optimizer="adam", metrics=["mean_squared_error","accuracy"])
 
-history = model.fit(X_train, y_train, batch_size=2, epochs=100, verbose=1, validation_split=0.2)
+history = model.fit(X_train, y_train, batch_size=2, epochs=1, verbose=1, validation_split=0.2, validation_data=(X_test,y_test))
+
+model.evaluate(X_test, y_test, verbose=1)
