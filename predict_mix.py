@@ -48,7 +48,7 @@ output = layers.Dense(9)(dense_layer_3)
 model = keras.Model(inputs=input_layer, outputs=output)
 model.compile(loss="mean_squared_error" , optimizer="adam", metrics=["mean_squared_error"])
 
-history = model.fit(X_train, y_train, batch_size=2, epochs=10, verbose=1, validation_split=0.2, validation_data=(X_test,y_test))
+history = model.fit(X_train, y_train, batch_size=2, epochs=1, verbose=1, validation_split=0.2, validation_data=(X_test,y_test))
 
 model.evaluate(X_test, y_test, verbose=1)
 
@@ -65,7 +65,7 @@ for subdir, dirs, files in os.walk(folder_2019):
         tmp_X = tmp.iloc[:, 0:55].values
         tmp_X = sc.fit_transform(tmp_X)
         pred = model.predict(tmp_X)
-        np.savetxt("Hackathon_Data/Dataset/Prediction1/Outputs/2019/" + file + 'output', pred, delimiter=',')
+        np.savetxt("Hackathon_Data/Dataset/Prediction1/Outputs/2019/" + 'output' + file, pred, header="Consommation (MW),Thermique (MW),Nucléaire (MW),Eolien (MW),Solaire (MW),Hydraulique (MW),Pompage (MW),Bioénergies (MW),Ech. physiques (MW)", delimiter=',')
         # with open("Hackathon_Data/Dataset/Prediction1/Outputs/2019/" + "pred" + str(count) + '.txt', 'w') as filehandle:
         #     for listitem in pred:
         #         filehandle.write('%s\n' % listitem)
@@ -79,7 +79,7 @@ for subdir, dirs, files in os.walk(folder_2020):
         tmp_X = tmp.iloc[:, 0:55].values
         tmp_X = sc.fit_transform(tmp_X)
         pred = model.predict(tmp_X)
-        np.savetxt("Hackathon_Data/Dataset/Prediction1/Outputs/2020/" + file + "output", pred, delimiter=',')
+        np.savetxt("Hackathon_Data/Dataset/Prediction1/Outputs/2020/" + "output" + file , pred, header="Consommation (MW),Thermique (MW),Nucléaire (MW),Eolien (MW),Solaire (MW),Hydraulique (MW),Pompage (MW),Bioénergies (MW),Ech. physiques (MW)", delimiter=',')
         #with open("Hackathon_Data/Dataset/Prediction1/Outputs/2020/" + "pred" + str(count) + '.txt', 'w') as filehandle:
         #    for listitem in pred:
         #        filehandle.write('%s\n' % listitem)
