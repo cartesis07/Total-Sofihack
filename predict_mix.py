@@ -22,12 +22,12 @@ training_set.fillna(0, inplace=True)
 print(np.isnan(training_set.values.sum()))
 
 X = training_set.iloc[:, 10:65].values
-y = training_set.iloc[:, 0:10].values
-
-print(X[0])
-print(y[0])
+y = training_set.iloc[:, 0:9].values
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+print(X_train.shape)
+print(y_train.shape)
 
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
@@ -37,7 +37,7 @@ input_layer = keras.Input(shape=(X.shape[1],))
 dense_layer_1 = layers.Dense(100, activation='relu')(input_layer)
 dense_layer_2 = layers.Dense(50, activation='relu')(dense_layer_1)
 dense_layer_3 = layers.Dense(25, activation='relu')(dense_layer_2)
-output = layers.Dense(10)(dense_layer_3)
+output = layers.Dense(9)(dense_layer_3)
 
 model = keras.Model(inputs=input_layer, outputs=output)
 model.compile(loss="mean_squared_error" , optimizer="adam", metrics=["mean_squared_error","accuracy"])
