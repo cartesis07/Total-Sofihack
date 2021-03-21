@@ -5,13 +5,13 @@ import os
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-inputs_path = "E:\\inputs"
-outputs_path = "E:\\outputs"
+inputs_path = "Hackathon_Data/Dataset/Prediction1/Inputs"
+outputs_path = "Hackathon_Data/Dataset/Prediction1/Outputs"
 
 headers = ['# Consommation (MW)', 'Thermique (MW)', 'Nucléaire (MW)', 'Eolien (MW)', 'Solaire (MW)', 'Hydraulique (MW)', 'Pompage (MW)', 'Bioénergies (MW)', 'Ech. physiques (MW)']
 previous = ['date'] + headers
 
-code_region = 52
+code_region = 84
 
 inputs, outputs = [], []
 
@@ -20,20 +20,20 @@ for subdir, dirs, files in os.walk(inputs_path):
         filepath = subdir + os.sep + file
         inputs.append(pd.read_csv(filepath, usecols=['CodeINSEE', 'date']))
 
+        new_file_path = "Hackathon_Data/Dataset/Prediction1/Outputs/output" + file[0:14] + "_input.csv"
+        outputs.append(pd.read_csv(new_file_path))
+
+#pd.concat([df1, df2], axis=1)
+
 i_df = pd.concat(inputs)
 i_df.reset_index(drop=True, inplace=True)
-
-for subdir, dirs, files in os.walk(outputs_path):
-    for file in files:
-        filepath = subdir + os.sep + file
-        outputs.append(pd.read_csv(filepath))
 
 o_df = pd.concat(outputs)
 o_df.reset_index(drop=True, inplace=True)
 
 df = pd.concat([i_df, o_df], axis=1).sort_values(by='date')
 
-df = df[df['CodeINSEE'] == 52]
+df = df[df['CodeINSEE'] == code_region]
 
 new_df = pd.DataFrame()
 previous_val = dict.fromkeys(previous)
@@ -73,7 +73,6 @@ for d in date_ar:
         delta_time_sec = 24*3600*delta_time.days + delta_time.seconds
     result_line = pd.Series()
     result_line['date'] = d
-    result_line['current_row'] = current_row
     for h in headers:
         a = R[current_row][1]['reg_a_' + h]
         b = R[current_row][1]['reg_b_' + h]
@@ -82,4 +81,10 @@ for d in date_ar:
         result_line['predicted_' + h] = r
     result = result.append(result_line, ignore_index=True)
 
-result.to_csv("E:\\mix_lin_" + str(code_region) + ".csv")
+result['mix'] = (result['predicted_Eolien (MW)'] + result['predicted_Solaire (MW)'] + result['predicted_Hydraulique (MW)'] - result['predicted_Pompage (MW)']) / (result['predicted_Thermique (MW)'] + result['predicted_Nucléaire (MW)'] + result['predicted_Eolien (MW)'] + result['predicted_Solaire (MW)'] + result['predicted_Hydraulique (MW)'] - result['predicted_Pompage (MW)'])
+
+result = result[['date', 'predicted_# Consommation (MW)', 'predicted_Thermique (MW)', 'predicted_Nucléaire (MW)', 'predicted_Eolien (MW)',  'predicted_Solaire (MW)', 'predicted_Hydraulique (MW)', 'predicted_Pompage (MW)', 'predicted_Bioénergies (MW)', 'predicted_Ech. physiques (MW)', 'mix']]
+
+result.fillna(0)
+
+result.to_csv("results_predicted/" + str(code_region) + "_2020" + ".csv")
