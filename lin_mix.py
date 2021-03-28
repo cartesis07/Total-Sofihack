@@ -5,13 +5,13 @@ import os
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
-inputs_path = "Hackathon_Data/Dataset/Prediction1/Inputs"
-outputs_path = "Hackathon_Data/Dataset/Prediction1/Outputs"
+inputs_path = "Hackathon_Data/Dataset/Prediction3/CrazyInputs"
+outputs_path = "Hackathon_Data/Dataset/Prediction3/Outputs"
 
 headers = ['# Consommation (MW)', 'Thermique (MW)', 'Nucléaire (MW)', 'Eolien (MW)', 'Solaire (MW)', 'Hydraulique (MW)', 'Pompage (MW)', 'Bioénergies (MW)', 'Ech. physiques (MW)']
 previous = ['date'] + headers
 
-code_region = 84
+code_region = 24
 
 inputs, outputs = [], []
 
@@ -20,7 +20,7 @@ for subdir, dirs, files in os.walk(inputs_path):
         filepath = subdir + os.sep + file
         inputs.append(pd.read_csv(filepath, usecols=['CodeINSEE', 'date']))
 
-        new_file_path = "Hackathon_Data/Dataset/Prediction1/Outputs/output" + file[0:14] + "_input.csv"
+        new_file_path = "Hackathon_Data/Dataset/Prediction3/Outputs/output" + file[0:12] + "_input.csv"
         outputs.append(pd.read_csv(new_file_path))
 
 #pd.concat([df1, df2], axis=1)
@@ -53,6 +53,8 @@ for index, row in df.iterrows():
 
 R = list(new_df.iterrows())
 
+#date_debut = datetime.strptime('2019-07-04 00:00:00', '%Y-%m-%d %H:%M:%S')
+#date_fin = datetime.strptime('2019-07-06 23:30:00', '%Y-%m-%d %H:%M:%S')
 date_debut = datetime.strptime('2020-11-14 00:00:00', '%Y-%m-%d %H:%M:%S')
 date_fin = datetime.strptime('2020-11-16 23:30:00', '%Y-%m-%d %H:%M:%S')
 
@@ -87,4 +89,4 @@ result = result[['date', 'predicted_# Consommation (MW)', 'predicted_Thermique (
 
 result.fillna(0)
 
-result.to_csv("results_predicted/" + str(code_region) + "_2020" + ".csv")
+result.to_csv("group_predicted/2020/" + str(code_region) + "_2020" + ".csv")

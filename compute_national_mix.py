@@ -4,27 +4,29 @@ import math
 import os
 import matplotlib.pyplot as plt
 
-folder = "results_predicted/2019"
+folder = "merged_mix_predicted/2019"
 
 dfs = []
 
 for subdir, dirs, files in os.walk(folder):
     for file in files:
         filepath = subdir + os.sep + file
-
         dfs.append(pd.read_csv(filepath))
 
 total = dfs[0]
 
 for i in range(1,7):
-    total['predicted_# Consommation (MW)'] = total['predicted_# Consommation (MW)'] + dfs[i]['predicted_# Consommation (MW)']
-    total['predicted_Bioénergies (MW)'] = total['predicted_Bioénergies (MW)'] + dfs[i]['predicted_Bioénergies (MW)']
-    total['predicted_Ech. physiques (MW)'] = total['predicted_Ech. physiques (MW)'] + dfs[i]['predicted_Ech. physiques (MW)']
-    total['predicted_Eolien (MW)'] = total['predicted_Eolien (MW)'] + dfs[i]['predicted_Eolien (MW)']
-    total['predicted_Hydraulique (MW)'] = total['predicted_Hydraulique (MW)'] + dfs[i]['predicted_Hydraulique (MW)']
-    total['predicted_Nucléaire (MW)'] = total['predicted_Nucléaire (MW)'] + dfs[i]['predicted_Nucléaire (MW)']
-    total['predicted_Pompage (MW)'] = total['predicted_Pompage (MW)'] + dfs[i]['predicted_Pompage (MW)']
-    total['predicted_Solaire (MW)'] = total['predicted_Solaire (MW)'] + dfs[i]['predicted_Solaire (MW)']
-    total['predicted_Thermique (MW)'] = total['predicted_Thermique (MW)'] + dfs[i]['predicted_Thermique (MW)']
+    total['date'] = dfs[i]['date']
+    total['# Consommation (MW)'] = total['# Consommation (MW)'] + dfs[i]['# Consommation (MW)']
+    total['Bioénergies (MW)'] = total['Bioénergies (MW)'] + dfs[i]['Bioénergies (MW)']
+    total['Ech. physiques (MW)'] = total['Ech. physiques (MW)'] + dfs[i]['Ech. physiques (MW)']
+    total['Eolien (MW)'] = total['Eolien (MW)'] + dfs[i]['Eolien (MW)']
+    total['Hydraulique (MW)'] = total['Hydraulique (MW)'] + dfs[i]['Hydraulique (MW)']
+    total['Nucléaire (MW)'] = total['Nucléaire (MW)'] + dfs[i]['Nucléaire (MW)']
+    total['Pompage (MW)'] = total['Pompage (MW)'] + dfs[i]['Pompage (MW)']
+    total['Solaire (MW)'] = total['Solaire (MW)'] + dfs[i]['Solaire (MW)']
+    total['Thermique (MW)'] = total['Thermique (MW)'] + dfs[i]['Thermique (MW)']
 
-total.to_csv('results_predicted/2019/total_2019.csv')
+total['mix'] = (total['Eolien (MW)'] + total['Solaire (MW)'] + total['Hydraulique (MW)'] - total['Pompage (MW)']) / (total['Thermique (MW)'] + total['Nucléaire (MW)'] + total['Eolien (MW)'] + total['Solaire (MW)'] + total['Hydraulique (MW)'] - total['Pompage (MW)'])
+
+total.to_csv('cost_predicted/total_2019.csv')

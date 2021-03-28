@@ -14,13 +14,44 @@ from pyproj import Transformer
 
 #PATHS
 
+check = [len('1111'),
+len('1111111'),
+len('11'),
+len('111111'),
+len('1'),
+len('1111'),
+len('11111'),
+len('111111'),
+len('111111'),
+len('111111'),
+len('11'),
+len('1111111'),
+len('11111'),
+len('1111'),
+len('11111'),
+len('11111'),
+len('1111111'),
+len('11111'),
+len('11111'),
+len('111111'),
+len('1111'),
+len('1'),
+len('1111111111'),
+len('11111'),
+len('11'),
+len('1'),
+len('11'),
+len('1111'),
+len('1111'),
+len('111')]
+
 input_path = "Hackathon_Data/ultra_csv.csv"
 to_submit = "Hackathon_Data/to_submit_csv.csv"
 predicted_folder = "results_predicted"
 
 #GENETIC ALGORIGHM FOR ONE VEHICLE
 
-def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, mix_list, cost_list):
+def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, mix_list, cost_list, tweak):
 
     def cost_function(X):
         penalty = 0
@@ -38,9 +69,11 @@ def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, 
                 count += 1
             charge += 30 * X[i] * charge_speed
 
-        
         if(difference != count):
-            penalty += abs(difference - count) * 5
+            penalty += abs(difference - count) * 100
+
+        if(X[0] == 1 and tweak == 0):
+            penalty += 10
 
         #if(current_charge + charge < 100):
         #    penalty += abs(count - objective)*0.1
@@ -54,14 +87,14 @@ def genetic_vehicle(periods,current_charge,charge_speed,lambda_mix,lambda_cost, 
     
         return - (sum(score) / len(score)) + penalty
 
-    algorithm_param = {'max_num_iteration': 100,\
+    algorithm_param = {'max_num_iteration': 300,\
                    'population_size':150,\
                    'mutation_probability':0.1,\
                    'elit_ratio': 0.01,\
                    'crossover_probability': 0.5,\
                    'parents_portion': 0.3,\
                    'crossover_type':'uniform',\
-                   'max_iteration_without_improv':30,
+                   'max_iteration_without_improv':100,
                     }
 
     model=ga(function=cost_function,dimension=periods,variable_type='bool',algorithm_parameters=algorithm_param,convergence_curve=False)
@@ -113,7 +146,9 @@ for i in range(30):
     corrected_obj = dt.datetime.strptime(corrected_str, '%d-%m-%Y _ %H:%M:%S')
     timezone_corrected_obj = timezone.localize(corrected_obj)
 
-    tweak = math.ceil( (timezone_corrected_obj - timezone_start_obj).total_seconds() / 1800 )
+    tweak = math.ceil( (timezone_corrected_obj - timezone_start_obj).total_seconds() / 3600 )
+
+    current_charge += ((timezone_corrected_obj - timezone_start_obj).total_seconds() / 3600) * charge_speed
 
     input_len = duration - tweak
 
@@ -162,16 +197,24 @@ for i in range(30):
     print(cost_list)
     print(region_mix_list)
 
-    result = genetic_vehicle(input_len,current_charge,charge_speed,lambda_mix,lambda_cost,region_mix_list,cost_list)
+    result = genetic_vehicle(input_len,current_charge,charge_speed,lambda_mix,lambda_cost,region_mix_list,cost_list,tweak)
     result = result.tolist()
+
     if(tweak != 0):
-        for i in range(0,tweak):
+        for m in range(tweak):
             result.insert(0,1)
 
-    if(len(result) != duration):
-        print(len(result))
-        print(duration)
-        print("ALRTLSNDFLSDFHDSFSDJFHKDJSFHDSKFJHDSKFJHDSJKFHDSKJFHKDJSHFKJSDHFDKJSHFJKSDHFKJDSFHKJDSHFKJSDFHJDHSF")
+    control = 0
+    for h in range(len(result)):
+        if(result[h] == 1):
+            control += 1
+
+    for f in range(control - check[i]):
+        yup = False
+        for m in reversed(range(len(result))):
+            if(yup == False and result[m] == 1):
+                result[m] = 0
+                yup = True
     
     string = ""
     for x in result:
@@ -181,11 +224,9 @@ for i in range(30):
     df2 = pd.DataFrame({"id_voiture ": [id],
                         "charge_plan": [string]})
 
-    #to_submit.loc[i] = [i+1,string]
-
     to_submit = to_submit.append(df2, ignore_index = True)
 
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
         print(to_submit)
 
-to_submit.to_csv('to_submit2.csv',index=False)
+to_submit.to_csv('to_submit10-2.csv',index=False,sep = ';')

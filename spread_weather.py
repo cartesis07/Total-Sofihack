@@ -25,14 +25,14 @@ for subdir, dirs, files in os.walk(folder_path):
 
         #SPREAD WEATHER
 
-        #last_row = 0
-        #for i in range(len(df)):
-        #    if(last_row != 0 and np.isnan(df['Altitude'].values[i])):
-        #        for j in range(17,len(list)):
-        #            df[list[j]].values[i] = df[list[j]].values[last_row]
-        #    else :
-        #        if(not np.isnan(df['Altitude'].values[i])):
-        #            last_row = i
+        last_row = 0
+        for i in range(len(df)):
+            if(last_row != 0 and np.isnan(df['Altitude'].values[i])):
+                for j in range(17,len(list)):
+                    df[list[j]].values[i] = df[list[j]].values[last_row]
+            else :
+                if(not np.isnan(df['Altitude'].values[i])):
+                    last_row = i
 
 
         if filepath.endswith(".csv"):
