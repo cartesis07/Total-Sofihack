@@ -1,2 +1,2 @@
 # Total-Sofihack
-Hackathon Total
+Hackathon Total Direct Energie
